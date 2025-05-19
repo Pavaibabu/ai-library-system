@@ -1,0 +1,23 @@
+<div class="container mt-4">
+    <h2>My Profile</h2>
+  
+    <form #userForm="ngForm" (ngSubmit)="updateProfile()">
+      <div class="mb-3">
+        <label>Name</label>
+        <input type="text" class="form-control" [(ngModel)]="user.name" name="name" required />
+      </div>
+  
+      <div class="mb-3">
+        <label>Email</label>
+        <input type="email" class="form-control" [(ngModel)]="user.email" name="email" required />
+      </div>
+  
+      <div class="mb-3">
+        <label>Password</label>
+        <input type="password" class="form-control" [(ngModel)]="user.password" name="password" />
+      </div>
+  
+      <button type="submit" class="btn btn-primary">Update</button>
+    </form>
+  </div>
+  

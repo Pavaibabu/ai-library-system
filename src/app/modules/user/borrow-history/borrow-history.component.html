@@ -1,0 +1,27 @@
+<div class="container mt-4">
+  <h2>Your Borrow History</h2>
+
+  <table class="table table-bordered table-striped mt-3">
+    <thead class="table-primary">
+      <tr>
+        <th>Book Title</th>
+        <th>Author</th>
+        <th>Borrowed Date</th>
+        <th>Return Date</th>
+        <th>Status</th>
+      </tr>
+    </thead>
+    <tbody>
+      <tr *ngFor="let book of borrowHistory">
+        <td>{{ book.title }}</td>
+        <td>{{ book.author }}</td>
+        <td>{{ book.borrowedDate | date: 'mediumDate' }}</td>
+        <td>{{ book.returnDate | date: 'mediumDate' }}</td>
+        <td>
+          <span class="badge bg-success" *ngIf="book.isReturned">Returned</span>
+          <span class="badge bg-warning text-dark" *ngIf="!book.isReturned">Not Returned</span>
+        </td>
+      </tr>
+    </tbody>
+  </table>
+</div>

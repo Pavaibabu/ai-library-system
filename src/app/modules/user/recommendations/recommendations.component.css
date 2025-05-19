@@ -1,0 +1,12 @@
+.card-title {
+    font-size: 1.1rem;
+  }
+  
+  .card-text {
+    font-size: 0.95rem;
+    color: #555;
+  }
+  
+  button.btn {
+    width: 50%;
+  }

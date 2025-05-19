@@ -1,0 +1,23 @@
+<div class="container">
+  <h3 class="mb-4 fw-bold">📚 Recommended Books</h3>
+
+  <div *ngIf="recommendations.length === 0" class="alert alert-warning">
+    No recommendations available at the moment.
+  </div>
+
+  <div *ngIf="recommendations.length > 0" class="row row-cols-1 row-cols-md-3 g-4">
+    <div class="col" *ngFor="let book of recommendations">
+      <div class="card h-100 shadow-sm">
+        <div class="card-body d-flex flex-column justify-content-between">
+          <div>
+            <h5 class="card-title fw-semibold">{{ book.title }}</h5>
+            <p class="card-text text-muted">by {{ book.author }}</p>
+          </div>
+          <button class="btn btn-success mt-3" (click)="borrowBook(book.id)">
+            Borrow
+          </button>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>

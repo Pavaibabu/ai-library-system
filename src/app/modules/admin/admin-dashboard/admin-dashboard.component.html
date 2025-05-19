@@ -1,0 +1,65 @@
+<div class="row g-4">
+  <div class="col-md-3">
+    <div class="card border-0 shadow-sm h-100" style="border-left: 4px solid #3a7bd5;">
+      <div class="card-body text-center">
+        <div class="icon-circle mb-3 mx-auto" style="background-color: rgba(58, 123, 213, 0.1);">
+          <i class="bi bi-journal-bookmark-fill text-primary fs-4"></i>
+        </div>
+        <h6 class="card-title text-muted">Total Books</h6>
+        <p class="fs-3 fw-bold text-dark">{{ totalBooks }}</p>
+      </div>
+    </div>
+  </div>
+
+  <div class="col-md-3">
+    <div class="card border-0 shadow-sm h-100" style="border-left: 4px solid #00d2ff;">
+      <div class="card-body text-center">
+        <div class="icon-circle mb-3 mx-auto" style="background-color: rgba(0, 210, 255, 0.1);">
+          <i class="bi bi-people-fill text-info fs-4"></i>
+        </div>
+        <h6 class="card-title text-muted">Total Users</h6>
+        <p class="fs-3 fw-bold text-dark">{{ totalUsers }}</p>
+      </div>
+    </div>
+  </div>
+
+  <div class="col-md-3">
+    <div class="card border-0 shadow-sm h-100" style="border-left: 4px solid #f39c12;">
+      <div class="card-body text-center">
+        <div class="icon-circle mb-3 mx-auto" style="background-color: rgba(243, 156, 18, 0.1);">
+          <i class="bi bi-book-half text-warning fs-4"></i>
+        </div>
+        <h6 class="card-title text-muted">Books Borrowed</h6>
+        <p class="fs-3 fw-bold text-dark">{{ booksBorrowed }}</p>
+      </div>
+    </div>
+  </div>
+
+  <div class="col-md-3">
+    <div class="card border-0 shadow-sm h-100" style="border-left: 4px solid #e74c3c;">
+      <div class="card-body text-center">
+        <div class="icon-circle mb-3 mx-auto" style="background-color: rgba(231, 76, 60, 0.1);">
+          <i class="bi bi-exclamation-triangle-fill text-danger fs-4"></i>
+        </div>
+        <h6 class="card-title text-muted">Overdue</h6>
+        <p class="fs-3 fw-bold text-dark">{{ overdue }}</p>
+      </div>
+    </div>
+  </div>
+</div>
+
+<div class="card mt-4 border-0 shadow-sm">
+  <div class="card-header bg-white border-0">
+    <h5 class="mb-0 fw-bold">
+      <i class="bi bi-bar-chart-fill me-2"></i>Library Activity Overview
+    </h5>
+  </div>
+  <div style="border: 2px solid grey; height: 400px;" *ngIf="chartOptions">
+    <highcharts-chart
+      [Highcharts]="Highcharts"
+      [options]="chartOptions"
+      [update]="updateFlag"
+      style="width: 100%; height: 100%; display: block;"
+    ></highcharts-chart>
+  </div>
+</div>

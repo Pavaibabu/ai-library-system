@@ -1,0 +1,109 @@
+<div class="container-fluid">
+  <div class="row">
+    <div class="col-md-12">
+      <!-- Filter Buttons -->
+    <div class="mb-3 d-flex gap-2">
+      <button class="btn btn-outline-dark" (click)="filterBooksByStatus('All')">All</button>
+      <button class="btn btn-outline-success" (click)="filterBooksByStatus('Available')">Available</button>
+      <button class="btn btn-outline-warning" (click)="filterBooksByStatus('Lost')">Lost</button>
+      <button class="btn btn-outline-danger" (click)="filterBooksByStatus('Damaged')">Damaged</button>
+    </div>
+
+      <!-- Add Book Button -->
+      <div class="d-flex justify-content-end mb-3">
+        <button class="btn btn-success fw-bold shadow" (click)="openAddBookCard()">+ ADD BOOK</button>
+      </div>
+
+      
+      <div class="table-responsive shadow">
+        <table class="table table-bordered">
+          <thead class="bg-danger text-white">
+            <tr>
+              <th>ID</th>
+              <th>Title</th>
+              <th>Genre</th>
+              <th>Author</th>
+              <th>Year</th>
+              <th>Status</th>
+              <th>Action</th>
+            </tr>
+          </thead>
+  
+          <tbody>
+            <tr *ngFor="let book of filteredBooks" class="align-middle">
+              <td>{{ book.id }}</td>
+              <td>{{ book.title }}</td>
+              <td>{{ book.genre }}</td>
+              <td>{{ book.author }}</td>
+              <td>{{ book.year }}</td>
+              <td>
+                <span 
+                  class="badge"
+                  [ngClass]="{
+                    'bg-success': book.status === 'Available',
+                    'bg-warning': book.status === 'Lost',
+                    'bg-danger': book.status === 'Damaged'
+                  }"
+                >
+                  {{ book.status }}
+                </span>
+              </td>
+              <td>
+                <div class="d-flex gap-2">
+                  <button class="btn btn-sm btn-primary" (click)="editBook(book)">Edit</button>
+                  <button class="btn btn-sm btn-danger" (click)="deleteBook(book)">Delete</button>
+                </div>
+              </td>
+            </tr>
+          </tbody>
+        </table>
+      </div>
+    
+    <!-- Add Book Modal -->
+    <div class="modal fade" [class.show]="isAddBookVisible" [style.display]="isAddBookVisible ? 'block' : 'none'">
+      <div class="modal-dialog">
+        <div class="modal-content">
+          <div class="modal-header bg-primary text-white">
+            <h5 class="modal-title">{{ isEditMode ? '✏️ Edit Book' : '📘 Add Book' }}</h5>
+            <button type="button" class="btn-close btn-outline-danger" (click)="closeAddBookCard()"></button>
+          </div>
+          <div class="modal-body">
+            <form (ngSubmit)="submitBookForm()">
+              <div class="mb-3">
+                <label class="form-label fw-semibold">Title</label>
+                <input type="text" class="form-control" [(ngModel)]="book.title" name="title" placeholder="Enter book title" required />
+              </div>
+              <div class="mb-3">
+                <label class="form-label fw-semibold">Author</label>
+                <input type="text" class="form-control" [(ngModel)]="book.author" name="author" placeholder="Enter author" required />
+              </div>
+              <div class="mb-3">
+                <label class="form-label fw-semibold">Genre</label>
+                <select class="form-control" [(ngModel)]="book.genre" name="genre" required>
+                  <option *ngFor="let genre of genres" [value]="genre">{{ genre }}</option>
+                </select>
+              </div>
+              <div class="mb-3">
+                <label class="form-label fw-semibold">Year</label>
+                <input type="number" class="form-control" [(ngModel)]="book.year" name="year" required />
+              </div>
+              <div class="mb-3">
+                <label class="form-label fw-semibold">Status</label>
+                <select class="form-control" [(ngModel)]="book.status" name="status">
+                  <option value="Available">Available</option>
+                  <option value="Lost">Lost</option>
+                  <option value="Damaged">Damaged</option>
+                </select>
+              </div>
+              <div class="d-flex justify-content-end gap-2 ">
+                <button type="submit" class="btn  btn-success"> Save</button>
+                <button type="button" class="btn btn-outline-danger" (click)="closeAddBookCard()">Cancel</button>
+              </div>
+            </form>
+          </div>
+        </div>
+      </div>
+    </div>
+    <div class="modal-backdrop fade" [class.show]="isAddBookVisible" [style.display]="isAddBookVisible ? 'block' : 'none'"></div>
+  </div>
+</div>

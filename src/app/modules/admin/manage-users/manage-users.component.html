@@ -1,0 +1,73 @@
+<div class="container mt-4">
+  <div class="d-flex justify-content-end mb-3">
+    <button class="btn btn-success fw-bold" (click)="openAddUserForm()">+ Add User</button>
+  </div>
+
+  <!-- Users Table -->
+  <div class="table-responsive shadow">
+    <table class="table table-bordered">
+      <thead class="bg-danger text-white">
+        <tr>
+          <th>Username</th>
+          <th>Email</th>
+          <th>Role</th>
+          <th>Actions</th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr *ngFor="let u of users" class="align-middle">
+          <td>{{ u.username }}</td>
+          <td>{{ u.email }}</td>
+          <td>{{ u.role }}</td>
+          <td>
+            <div class="d-flex gap-2">
+              <button class="btn btn-sm btn-primary text-white" (click)="editUser(u)">Edit</button>
+              <button class="btn btn-sm btn-danger" (click)="deleteUser(u)">Delete</button>
+            </div>
+          </td>
+        </tr>
+      </tbody>
+    </table>
+  </div>
+</div>
+
+<!-- Add/Edit User Modal -->
+<div class="modal fade" [class.show]="isUserFormVisible" [style.display]="isUserFormVisible ? 'block' : 'none'">
+  <div class="modal-dialog modal-lg">
+    <div class="modal-content">
+      <div class="modal-header bg-primary text-white">
+        <h5 class="modal-title">{{ isEditMode ? 'Edit User' : 'Add User' }}</h5>
+        <button type="button" class="btn-close bg-light" (click)="closeUserForm()"></button>
+      </div>
+      <div class="modal-body">
+        <form (ngSubmit)="saveUser()">
+          <div class="mb-3">
+            <label class="form-label">Username:</label>
+            <input [(ngModel)]="user.username" name="username" required class="form-control">
+          </div>
+
+          <div class="mb-3">
+            <label class="form-label">Email:</label>
+            <input [(ngModel)]="user.email" name="email" type="email" required class="form-control">
+          </div>
+
+          <div class="mb-3">
+            <label class="form-label">Role:</label>
+            <select [(ngModel)]="user.role" name="role" class="form-select">
+              <option value="user">User</option>
+              <option value="admin">Admin</option>
+            </select>
+          </div>
+
+          <button type="submit" class="btn btn-primary me-2">
+            {{ isEditMode ? 'Update' : 'Save' }}
+          </button>
+          <button type="button" class="btn btn-secondary" (click)="closeUserForm()">Cancel</button>
+        </form>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- Modal Backdrop -->
+<div class="modal-backdrop fade" [class.show]="isUserFormVisible" [style.display]="isUserFormVisible ? 'block' : 'none'"></div>
