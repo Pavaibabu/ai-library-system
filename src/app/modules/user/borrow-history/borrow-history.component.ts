@@ -13,13 +13,15 @@ import { ActivatedRoute } from '@angular/router';
 export class BorrowHistoryComponent implements OnInit {
 
   borrowHistory: any[] = [];
-  userId: number = 12; 
+  borrowedBooks:number[]=[];
+  userId: number = 0; 
+  successMessage: string = '';
 
   constructor(private route: ActivatedRoute, private userService: UserService) {}
 
   ngOnInit(): void {
     const userId = Number(localStorage.getItem('userId'));
-  
+     this.userId = userId;
     if (userId) {
       this.userService.getBorrowHistory(userId).subscribe(data => {
         this.borrowHistory = data;
@@ -28,8 +30,6 @@ export class BorrowHistoryComponent implements OnInit {
       console.error('User ID not found in localStorage');
     }
   }
-  
-  
   loadBorrowHistory(): void {
     this.userService.getBorrowHistory(this.userId).subscribe({
       next: (data) => {
@@ -40,4 +40,40 @@ export class BorrowHistoryComponent implements OnInit {
       }
     });
   }
+  loadBorrowedBooks(): void {
+    const userId = Number(localStorage.getItem('userId')); // or from your auth service
+    this.userService.getBorrowHistory(userId).subscribe({
+      next: (data) => {
+        this.borrowedBooks = data.map(b => b.bookId);
+      },
+      error: (err) => {
+        console.error('Error fetching borrowed books:', err);
+      }
+    });
+  }
+
+  isBorrowed(bookId: number): boolean {
+    return this.borrowedBooks.includes(bookId);
+  }
+  
+  returnBook(bookId: number): void {
+    const userId = Number(localStorage.getItem('userId'));
+    this.userService.returnBook(userId, bookId).subscribe({
+    next: () => {
+          alert('Book returned successfully!');
+          this.successMessage = 'Book returned successfully!';
+          setTimeout(()=>{this.successMessage = '';}, 3000);
+          this.borrowHistory = this.borrowHistory.filter(book => book.id !== bookId);
+          this.loadBorrowHistory(); 
+          this.userService.updateBorrowedBooks(this.userId);
+        },
+    error: (err) => {
+          console.error('Error returning book:', err);
+          alert('Failed to return book.');
+        }
+      });
+    }
+
+  
+  
 }

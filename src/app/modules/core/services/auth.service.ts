@@ -29,9 +29,21 @@ export class AuthService {
 
   private registerUrl = 'http://localhost:5020/api/Auth/register'; // Replace with your real API URL
 
-  register(payload: { username: string; password: string; email: string; role: string }): Observable<any> {
-    return this.http.post<any>(this.registerUrl, payload);
-  }
-  
+register(payload: { username: string; password: string; email: string; role: string }): Observable<any> {
+  const currentUser = JSON.parse(localStorage.getItem('user') || '{}');
+  const roleHeader = currentUser?.role || '';
+
+  return this.http.post<any>(this.registerUrl, payload, {
+    headers: {
+      'X-User-Role': roleHeader
+    }
+  });
 }
+}
+
+
+
+
+  
+
 

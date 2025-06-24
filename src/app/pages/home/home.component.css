@@ -1,6 +1,7 @@
 .hero-section {
   position: relative;
-  min-height: 100vh;
+  padding: 40px 0;               
+  min-height: 80vh; 
   overflow: hidden;
   display: flex;
   align-items: center;
@@ -21,4 +22,5 @@
 .container {
   position: relative;
   z-index: 1;
+  max-height: 90vh;
 }

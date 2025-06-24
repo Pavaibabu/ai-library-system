@@ -1,52 +1,75 @@
 import { Component } from '@angular/core';
 import { AuthService } from '../../core/services/auth.service';
 import { CommonModule } from '@angular/common';
-import { FormsModule } from '@angular/forms';
-import { Router } from '@angular/router';
+import { FormBuilder, FormGroup, FormsModule, ReactiveFormsModule, Validators } from '@angular/forms';
+import { Router, RouterModule } from '@angular/router';
 import { NavbarComponent } from "../../../components/navbar/navbar.component";
+import { FooterComponent } from "../../../components/footer/footer.component";
 
 @Component({
   selector: 'app-register',
-  imports: [CommonModule, FormsModule, NavbarComponent],
+  imports: [CommonModule, FormsModule, NavbarComponent, ReactiveFormsModule, RouterModule, FooterComponent],
   templateUrl: './register.component.html',
   styleUrls: ['./register.component.css']
 })
 export class RegisterComponent {
-  username = '';
-  password = '';
-  email = '';
-  role = '';
+  form: FormGroup;
   successMessage = '';
   errorMessage = '';
+ 
 
-  constructor(private authService: AuthService, private router: Router) {}
+  constructor(private fb: FormBuilder, private authService: AuthService, private router: Router) {
+    this.form = this.fb.group({
+      username: ['', [Validators.required, Validators.minLength(3)]],
+      email: ['', [Validators.required, Validators.email]],
+      password: ['', [Validators.required, Validators.minLength(4)]],
+      role: ['', Validators.required]
+    });
+  }
 
-  register() {
-    const payload = {
-      username: this.username,
-      password: this.password,
-      email: this.email,
-      role: this.role
-    };
-  
+  register(): void {
+    if (this.form.invalid) return;
+    const payload = this.form.value;
     this.authService.register(payload).subscribe({
-      next: (response) => {
-        console.log('Registration successful:', response);
-        alert("Registration successful!");
-        this.router.navigate(['']); 
+      next: (response: any) => {
+        if (response.statusCode === 1) {
+          this.successMessage='Registaration Successfull';
+          setTimeout(()=>{this.successMessage,''},3000);
+          alert(response.message);
+
+          const registeredUser = {
+            id: response.userId,
+            username: payload.username,
+            email: payload.email,
+            role: payload.role
+          };
+
+          localStorage.setItem('user', JSON.stringify(registeredUser));
+
+          if (registeredUser.role === 'admin') {
+            this.router.navigate(['/admin/dashboard']);
+          } else {
+            this.router.navigate(['/user/dashboard']);
+          }
+        } else {
+          alert(response.message);
+        }
       },
-      error: (err) => {
-        console.error('Registration error:', err);
-        alert(err.error || "Registration failed.");
+      error: (err: any) => {
+        console.error('Registration failed:', err);
+         if (err.status === 400 && err.error) {
+    alert(err.error); 
+  }else
+  {
+    alert('Something went wrong during registration.');
+  }
+        
       }
     });
-  }  
-  
+  }
 
-  clearForm() {
-    this.username = '';
-    this.password = '';
-    this.email = '';
-    this.role = '';
+  clearForm(): void {
+    this.form.reset();
   }
 }
+

@@ -25,3 +25,46 @@
   padding: 0.5em 0.75em;
   border-radius: 0.5rem;
 }
+
+::ng-deep .ag-theme-alpine.ag-custom-grid {
+  font-family: 'Segoe UI', sans-serif;
+  font-size: 14px;
+  padding: 10px;
+}
+
+::ng-deep .ag-header-cell-label {
+  font-weight: 600;
+  color: #2e2e2e;
+}
+
+::ng-deep .ag-cell {
+  padding: 12px !important;
+  line-height: 1.5;
+}
+
+.badge {
+  border-radius: 12px;
+  font-size: 12px;
+  font-weight: 500;
+  text-transform: capitalize;
+}
+
+.badge-success {
+  background-color: #28a745;
+  color: white;
+}
+
+.badge-warning {
+  background-color: #ffc107;
+  color: black;
+}
+
+.badge-danger {
+  background-color: #dc3545;
+  color: white;
+}
+
+.badge-secondary {
+  background-color: #6c757d;
+  color: white;
+}

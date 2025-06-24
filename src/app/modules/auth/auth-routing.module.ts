@@ -5,11 +5,13 @@ import { RegisterComponent } from './register/register.component';
 import { AdminDashboardComponent } from '../admin/admin-dashboard/admin-dashboard.component';
 import { UserDashboardComponent } from '../user/user-dashboard/user-dashboard.component';
 
+
 const routes: Routes = [
   { path: '', component: LoginComponent },
   { path: 'register', component: RegisterComponent },
   { path: 'admin-dashboard', component: AdminDashboardComponent },
   { path: 'user-dashboard', component: UserDashboardComponent },
+
   { path: '**', redirectTo: '' }
 ];
 

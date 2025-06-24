@@ -1,9 +1,13 @@
+.nav-link-custom.active {
+  color:#ffc107; 
+}
+
 .nav-link-custom {
   color: white;
   transition: color 0.3s ease;
 }
 
-.nav-link-custom:hover {
+.nav-link-custom:hover,.nav-link-custom:active {
   color: #ffc107 !important; 
 }
 

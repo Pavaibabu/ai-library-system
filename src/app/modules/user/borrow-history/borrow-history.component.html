@@ -1,6 +1,9 @@
 <div class="container mt-4">
   <h2>Your Borrow History</h2>
-
+  <div *ngIf="successMessage" class="alert alert-success alert-dismissible fade show" role="alert">
+                {{ successMessage }}
+                <button type="button" class="btn-close" (click)="successMessage = ''"></button>
+        </div>
   <table class="table table-bordered table-striped mt-3">
     <thead class="table-primary">
       <tr>
@@ -9,6 +12,7 @@
         <th>Borrowed Date</th>
         <th>Return Date</th>
         <th>Status</th>
+        <th>ReturnBook</th>
       </tr>
     </thead>
     <tbody>
@@ -20,6 +24,14 @@
         <td>
           <span class="badge bg-success" *ngIf="book.isReturned">Returned</span>
           <span class="badge bg-warning text-dark" *ngIf="!book.isReturned">Not Returned</span>
+        </td>
+        <td>
+           <button 
+              *ngIf="!book.isReturned" 
+              class="btn btn-sm btn-primary ms-2"
+              (click)="returnBook(book.bookId)">
+              Return
+            </button>
         </td>
       </tr>
     </tbody>

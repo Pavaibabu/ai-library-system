@@ -5,6 +5,7 @@ import { BorrowHistoryComponent } from './borrow-history/borrow-history.componen
 import { UserProfileComponent } from './user-profile/user-profile.component';
 import { BrowseBooksComponent } from './browse-books/browse-books.component';
 import { RecommendationsComponent } from './recommendations/recommendations.component';
+import { chatbotComponent } from './chatbot/chatbot.component';
 
 
 const routes: Routes = [
@@ -12,10 +13,12 @@ const routes: Routes = [
    path: '',
        component: UserDashboardComponent,
        children: [
+
          { path: 'browse-books', component: BrowseBooksComponent },
          { path: 'borrow-history', component: BorrowHistoryComponent },
          { path: 'user-profile', component:UserProfileComponent },
          { path: 'recommendations', component: RecommendationsComponent },
+         { path: 'chatbot', component: chatbotComponent },
          { path: '', redirectTo: 'dashboard', pathMatch: 'full' },
          { path: '**', redirectTo: 'dashboard' } //
     ]

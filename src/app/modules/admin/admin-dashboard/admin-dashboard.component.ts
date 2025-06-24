@@ -18,17 +18,14 @@ export class AdminDashboardComponent {
   totalUsers: number = 0;
   booksBorrowed: number = 0;
   overdue: number = 0;
-  books: any[] = [];
-  filteredBooks: any[] = [];
   Highcharts: typeof Highcharts = Highcharts;
-chartOptions!: Highcharts.Options;
-updateFlag: boolean = false;
+  chartOptions!: Highcharts.Options;
+  updateFlag: boolean = false;
 
   constructor(private adminService: AdminService) {}
 
   ngOnInit(): void {
     this.fetchDashboardStats();
-    this.getAllBooks();
   }
 
   fetchDashboardStats(): void {
@@ -46,8 +43,7 @@ updateFlag: boolean = false;
         overdue: this.overdue
       });
 
-      this.chartOptions = {
-        accessibility: { enabled: false }, 
+      this.chartOptions = { 
         chart: {
           type: 'column'
         },
@@ -94,24 +90,6 @@ updateFlag: boolean = false;
       console.error('Error fetching dashboard stats:', err);
     }
   });
-}
-
-  getAllBooks(): void {
-    this.adminService.getAllBooks().subscribe({
-      next: (data) => {
-        this.books = data;
-        this.filteredBooks = data;
-      },
-      error: (err) => {
-        console.error('Error fetching books:', err);
-      }
-    });
   }
-
- 
-  logout(){
-    console.log("Logging out..");
-  }
-
  
 }

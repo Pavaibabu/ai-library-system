@@ -6,8 +6,7 @@ import { UserService } from '../../core/services/user.service';
 import * as Highcharts from 'highcharts';
 import { HighchartsChartModule } from 'highcharts-angular';
 import { ChangeDetectorRef } from '@angular/core';
-
-
+import { chatbotComponent } from '../chatbot/chatbot.component';
 
 interface Book {
   title: string;
@@ -26,7 +25,7 @@ interface User {
 
 @Component({
   selector: 'app-user-dashboard',
-  imports:[CommonModule,FormsModule,RouterModule,HighchartsChartModule],
+  imports:[CommonModule,FormsModule,RouterModule,HighchartsChartModule,chatbotComponent],
   templateUrl: './user-dashboard.component.html',
   styleUrls: ['./user-dashboard.component.css']
 })
@@ -35,54 +34,60 @@ interface User {
 export class UserDashboardComponent implements OnInit {
 
   user: User | null = null;
-
-  // Stats
+  showLogoutAlert = false;
   borrowedBooks = 0;
   dueSoon = 0;
   returnedBooks = 0;
   overdueBooks = 0;
-
-
-  recommendedBooks: any[] = [];
+  recommendations: any[] = [];
 
   Highcharts: typeof Highcharts = Highcharts;
   chartOptions: Highcharts.Options = {};
 
-  constructor(private UserService: UserService,public router: Router,private cdr: ChangeDetectorRef) {}
+  constructor(private UserService: UserService,public router: Router,public cdr:ChangeDetectorRef) {}
   
   isMainDashboard(): boolean {
     return this.router.url === '/user';
   }
 
-  recommendations: any[] = [];
+  ngOnInit(): void {
+    const userId = Number(localStorage.getItem('userId'));
+    console.log("User ID from localStorage:", userId); 
 
-ngOnInit(): void {
-  const userId = Number(localStorage.getItem('userId'));
-  console.log("User ID from localStorage:", userId); 
+    this.UserService.getUserProfile(userId).subscribe(
+      (data: User) => {
+        this.user = data;
+      },
+      (error) => {
+        console.error("Error fetching user data", error);
+      }
+    );
 
- 
-  this.UserService.getUserProfile(userId).subscribe(
-    (data: User) => {
-      this.user = data;
+  
+  this.UserService.getBorrowHistory(userId).subscribe(
+    (books: any[]) => {
+      const today = new Date();
+      this.borrowedBooks = books.length;
+      this.returnedBooks = books.filter(b => b.status === 'Returned').length;
+      this.dueSoon = books.filter(b => {
+        const dueDate = new Date(b.dueDate);
+        const diffDays = (dueDate.getTime() - today.getTime()) / (1000 * 3600 * 24);
+        return b.status !== 'Returned' && diffDays > 0 && diffDays <= 3;
+      }).length;
 
-      // Update stats
-      this.borrowedBooks = data.borrowedBooks;
-      this.dueSoon = data.dueSoon;
-      this.returnedBooks = data.returnedBooks;
-      this.overdueBooks = data.overdueBooks;
-       setTimeout(() => {
-      this.initializeChart();  
-    }, 0);
+      this.overdueBooks = books.filter(b => {
+        const dueDate = new Date(b.dueDate);
+        return b.status !== 'Returned' && dueDate < today;
+      }).length;
 
-      console.log('User profile loaded:', this.user);
+      console.log("Borrowed:", this.borrowedBooks, "Returned:", this.returnedBooks, "Due Soon:", this.dueSoon, "Overdue:", this.overdueBooks);
       this.initializeChart();
-    },
-    (error) => {
-      console.error("Error fetching user data", error);
-    }
+      },
+      (error) => {
+        console.error("Error fetching borrow history", error);
+      }
   );
 
-  // Fetch recommendations
   this.UserService.getRecommendations(userId).subscribe(
     (data) => {
       console.log("Recommendations received:", data);
@@ -132,19 +137,21 @@ initializeChart(): void {
     }
   };
   this.cdr.detectChanges(); 
+  console.log("Chart Data:", [this.borrowedBooks, this.dueSoon, this.returnedBooks, this.overdueBooks]);
+
 }
 
- 
+  logout(): void {
+    const confirmed = confirm('Are you sure you want to logout?');
 
-
-borrowBook(book: any): void {
-  console.log('Borrowing book:', book.title);
-}
-
-logout(): void {
-  console.log('Logging out...');
-  localStorage.clear(); 
-  this.router.navigate(['/']);
-}
+    if (confirmed) {
+      localStorage.clear();
+      this.showLogoutAlert = true;
+      setTimeout(() => {
+        this.showLogoutAlert = false;
+        this.router.navigate(['/']);
+      }, 1000);
+    }
+  }
 }
  

@@ -3,8 +3,6 @@ import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
 import { AdminService } from '../../core/services/admin.service';
 
-
-
 @Component({
   selector: 'app-manage-books',
   standalone: true,
@@ -17,10 +15,10 @@ export class ManageBooksComponent {
   books: any[] = [];
   filteredBooks: any[] = [];
   successMessage: string = '';
-  statuses = ['All', 'Available', 'Lost', 'Damaged'];
+  statuses = ['All', 'Available', 'Borrowed', 'Damaged'];
   selectedStatus = 'All';
   genres: string[] = ['Fiction', 'Non-Fiction', 'Science', 'Fantasy', 'Mystery', 'Biography', 'Romance'];
- 
+  searchTerm:string=''; 
 
   book = {
     id: 0,
@@ -28,23 +26,50 @@ export class ManageBooksComponent {
     author: '',
     genre: '',
     year: null,
-    status: 'Available'
+    status: 'Available',
+    copies: 1 
   };
-
-
+  
   constructor(private adminService: AdminService) {
     this.loadBooks();
   }
 
-
-filterBooksByStatus(status: string): void {
-  this.selectedStatus = status;
-  if (status === 'All') {
-    this.filteredBooks = this.books;
-  } else {
-    this.filteredBooks = this.books.filter(book => book.status === status);
+  formatBookId(id: number): string {
+    return 'BOOK' + id.toString().padStart(2, '0');
+    }
+  
+  loadBooks() {
+    this.adminService.getAllBooks().subscribe({
+      next: (data) => {
+        this.books = data.map(book => ({
+          ...book,
+          status: book.status && book.status.trim() !== '' ? book.status : 'Borrowed'
+        }));
+        this.filterBooksByStatus(this.selectedStatus);
+      },
+      error: (err) => console.error('Failed to load books:', err)
+    });
+  
   }
-}
+
+
+  filterBooksByStatus(status: string): void {
+    this.selectedStatus = status;
+    if (status === 'All') {
+      this.filteredBooks = this.books;
+    } else {
+      this.filteredBooks = this.books.filter(book => book.status === status);
+    }
+  }
+ searchBooks(): void {
+    const term = this.searchTerm.toLowerCase();
+
+     this.filteredBooks = this.books.filter(book =>
+      book.title.toLowerCase().includes(term) ||
+      book.author.toLowerCase().includes(term) ||
+      book.genre?.toLowerCase().includes(term)
+    );
+  }
 
   openAddBookCard() {
     this.isAddBookVisible = true;
@@ -57,17 +82,14 @@ filterBooksByStatus(status: string): void {
     this.resetForm();
   }
   submitBookForm() {
-    if (this.isEditMode) {
-      this.updateBook();
-    } else {
       this.addBook();
-    }
   }
 
   addBook() {
     if (this.isEditMode) {
       this.adminService.updateBook(this.book).subscribe({
         next: () => {
+          alert('Book Updated Successfully!');
           this.successMessage = ' Book updated successfully!';
           this.closeAddBookCard();
           this.loadBooks();
@@ -81,6 +103,7 @@ filterBooksByStatus(status: string): void {
     } else {
       this.adminService.addBook(this.book).subscribe({
         next: () => {
+          alert('Book added successfully!');
           this.successMessage = ' Book added successfully!';
           this.closeAddBookCard();
           this.loadBooks();
@@ -94,18 +117,39 @@ filterBooksByStatus(status: string): void {
     }
   }
 
+  exportToCSV():void{
+    const headers = ['ID', 'Title', 'Author', 'Genre', 'Year', 'Status', 'Copies'];
+    const rows = this.filteredBooks.map(book => [
+      book.id,
+      book.title,
+      book.author,
+      book.genre,
+      book.year,
+      book.status,
+      book.copies
+    ]);
+    let csvContent = 'data:text/csv;charset=utf-8,';
+    csvContent += headers.join(',') + '\n';
 
-  loadBooks() {
-    this.adminService.getAllBooks().subscribe({
-      next: (data) => {
-        this.books = data;
-        this.filteredBooks = data; 
-      },
-      error: (err) => console.error('Failed to load books:', err)
-    });
+    rows.forEach(row =>{
+      csvContent+=row.join(',')+'\n';
+    })
+    const encodeUri=encodeURI(csvContent);
+    const link = document.createElement('a');
+    link.setAttribute('href',encodeUri);
+    link.setAttribute('download', 'books.csv');
+    document.body.appendChild(link);
+    link.click();
+    document.body.removeChild(link);
+}
+
+editBook(bookToEdit: any) {
+    this.isEditMode = true;
+    this.book = { ...bookToEdit };
+    this.isAddBookVisible = true;
   }
 
-  updateBook() {
+updateBook() {
     this.adminService.updateBook(this.book).subscribe({
       next: (res) => {
         console.log(' Update success:', res);
@@ -120,27 +164,23 @@ filterBooksByStatus(status: string): void {
       }
     });
   }
-  editBook(bookToEdit: any) {
-    this.isEditMode = true;
-    this.book = { ...bookToEdit };
-    this.isAddBookVisible = true;
+  
+ deleteBook(book: any) {
+  if (confirm(`Are you sure you want to delete "${book.title}"?`)) {
+   this.adminService.deleteBook(book.id).subscribe({
+  next: (res) => {
+    this.successMessage = res.message;
+    this.loadBooks();
+    setTimeout(() => this.successMessage = '', 3000);
+  },
+  error: (err) => {
+    console.error('Error deleting book:', err);
+    alert('Failed to delete book.');
   }
+});
 
-  deleteBook(book: any) {
-    if (confirm(`Are you sure you want to delete "${book.title}"?`)) {
-      this.adminService.deleteBook(book.id).subscribe({
-        next: () => {
-          alert('Book deleted successfully!');
-          this.loadBooks();
-        },
-        error: (err) => {
-          console.error('Error deleting book:', err);
-          alert('Failed to delete book.');
-        }
-      });
-    }
-  }
-
+}
+}
   resetForm() {
     this.book = {
       id: 0,
@@ -148,12 +188,10 @@ filterBooksByStatus(status: string): void {
       author: '',
       genre: '',
       year: null,
-      status: 'Available'
+      status: 'Available',
+      copies: 1  
     };
   }
 
 }
-
- 
-  
 

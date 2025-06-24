@@ -1,6 +1,6 @@
 import { HttpClient } from '@angular/common/http';
 import { Injectable } from '@angular/core';
-import { Observable } from 'rxjs';
+import { BehaviorSubject, Observable } from 'rxjs';
 
 @Injectable({
   providedIn: 'root'
@@ -9,52 +9,66 @@ export class UserService {
 
   private baseUrl = 'http://localhost:5020/api/User';
 
+  private borrowedBooksSubject = new BehaviorSubject<number[]>([]);
+  borrowedBooks$ = this.borrowedBooksSubject.asObservable();
+
   constructor(private http: HttpClient) {}
 
-  browseBooks(): Observable<any[]> {
-    return this.http.get<any[]>(`${this.baseUrl}/BrowseBooks`);
+  updateBorrowedBooks(userId: number) {
+    this.getBorrowHistory(userId).subscribe(history => {
+      const borrowed = history
+        .filter(b => b.status === 'Borrowed')
+        .map(b => b.bookId);
+      this.borrowedBooksSubject.next(borrowed);
+    });
   }
 
-  borrowBook(userId: number, bookId: number): Observable<any> {
+    browseBooks(): Observable<any[]> {
+      return this.http.get<any[]>(`${this.baseUrl}/BrowseBooks`);
+    }
+
+    borrowBook(userId: number, bookId: number): Observable<any> {
     return this.http.post(`${this.baseUrl}/BorrowBook/${userId}`, {
-      bookId: bookId
-    });
+      bookId
+    }, { responseType: 'text' });
   }
 
-  
-  
+    getBorrowHistory(userId: number): Observable<any[]> {
+      return this.http.get<any[]>(`${this.baseUrl}/BorrowHistoryofUser`, {
+        params: { userId }
+      });
+    }
 
-  getBorrowHistory(userId: number): Observable<any[]> {
-    return this.http.get<any[]>(`${this.baseUrl}/BorrowHistoryofUser`, {
-      params: { userId }
-    });
-  }
-
-  // 3. Get User Profile
-  getUserProfile(id: number): Observable<any> {
+    getUserProfile(id: number): Observable<any> {
     return this.http.get(`${this.baseUrl}/GetUserProfile`, {
       params: { id }
     });
   }
 
-  // 4. Update User Profile
-  updateUserProfile(id: number, updatedUser: any): Observable<any> {
-    return this.http.put(`${this.baseUrl}/UpdateProfile/${id}`, updatedUser);
+    updateUserProfile(id: number, updatedUser: any): Observable<any> {
+    return this.http.put(`${this.baseUrl}/UpdateProfile/${id}`, updatedUser,{ responseType: 'text' });
   }
 
-    private recommendation_apiUrl = 'http://localhost:8000/recommendations'; // Update with your Flask API URL
+
+    returnBook(userId: number, bookId: number): Observable<any> {
+    return this.http.post(`${this.baseUrl}/ReturnBook`, {
+      userId,
+      bookId
+    }, { responseType: 'text' });
+  }
+
+  private recommendation_apiUrl = 'http://localhost:5000/recommendations'; 
 
   
     getRecommendations(userId: number): Observable<any> {
-      return this.http.get<any>(`${this.recommendation_apiUrl}/${userId}`);
+      return this.http.get<any[]>(`${this.recommendation_apiUrl}/${userId}`);
     }
   
-    private search_apiUrl = 'http://localhost:8001'; 
+  private search_apiUrl = 'http://localhost:5000'; 
       
     searchBooks(query: string): Observable<any[]> {
     return this.http.get<any[]>(`${this.search_apiUrl}/search_books/${query}`);
     }
-  
 }
   
 

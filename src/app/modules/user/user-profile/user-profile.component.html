@@ -1,5 +1,9 @@
 <div class="container mt-4">
     <h2>My Profile</h2>
+     <div *ngIf="successMessage" class="alert alert-success alert-dismissible fade show" role="alert">
+                {{ successMessage }}
+            <button type="button" class="btn-close" (click)="successMessage = ''"></button>
+        </div>
   
     <form #userForm="ngForm" (ngSubmit)="updateProfile()">
       <div class="mb-3">

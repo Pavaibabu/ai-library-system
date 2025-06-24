@@ -1,5 +1,5 @@
 import { Injectable } from '@angular/core';
-import { HttpClient } from '@angular/common/http';
+import { HttpClient,HttpParams } from '@angular/common/http';
 import { Observable } from 'rxjs';
 
 @Injectable({
@@ -26,10 +26,11 @@ export class AdminService {
     return this.http.put(`${this.baseUrl}/UpdateBook`, book);
   }
   
-
-  deleteBook(id: number): Observable<any> {
-    return this.http.delete(`${this.baseUrl}/DeleteBookById?id=${id}`);
+  deleteBook(bookId: number): Observable<{ message: string }> {
+    return this.http.delete<{ message: string }>( `${this.baseUrl}/DeleteBookById?id=${bookId}`
+    );
   }
+
 
   getAllUsers(): Observable<any[]> {
     return this.http.get<any[]>(`${this.baseUrl}/ViewAllUsers`);
@@ -39,16 +40,19 @@ export class AdminService {
     return this.http.get<any>(`${this.baseUrl}/ViewUserById?id=${id}`);
   }
 
-  addUser(): Observable<any[]> {
-    return this.http.get<any[]>(`${this.baseUrl}/AddUser`);
+  addUser(user: any): Observable<any> {
+    return this.http.post<any>(`${this.baseUrl}/AddUser`, user, {
+      responseType: 'json'
+    });
   }
 
   updateUser(user: any): Observable<any> {
-    return this.http.put(`${this.baseUrl}/UpdateUser`, user);
-  }
+  const params = new HttpParams().set('role', 'admin');
+  return this.http.put(`${this.baseUrl}/UpdateUser?id=${user.id}`, user, { params });
+}
 
   deleteUser(id: number): Observable<any> {
-    return this.http.delete(`${this.baseUrl}/DeleteUserById?id=${id}`);
+    return this.http.delete<{ message: string }>(`${this.baseUrl}/DeleteUserById?id=${id}`);
   }
 
 }

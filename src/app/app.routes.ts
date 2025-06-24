@@ -15,12 +15,15 @@ export const routes: Routes = [
         path: 'login',
         loadChildren: () => import('./modules/auth/auth.module').then(m => m.AuthModule)
     },
+    {
+  path: 'auth',
+  loadChildren: () => import('./modules/auth/auth.module').then(m => m.AuthModule)
+}
+,
     
     { path: 'register', component: RegisterComponent },
 
     { path: 'about', component: AboutComponent },
-
-      { path: 'register', component: RegisterComponent },
       { path: 'admin', loadChildren: () => import('./modules/admin/admin.module').then(m => m.AdminModule) },
       { path: 'user', loadChildren: () => import('./modules/user/user.module').then(m => m.UserModule) },
       {

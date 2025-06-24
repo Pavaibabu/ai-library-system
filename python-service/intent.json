@@ -1,0 +1,51 @@
+[
+  {
+    "intent": "greet",
+    "examples": [
+      "hello", "hi", "hey", "good morning", "good evening"
+    ]
+  },
+  {
+    "intent": "search_books",
+    "examples": [
+      "show me books by Dan Brown",
+      "find mystery novels",
+      "recommend science fiction books",
+      "suggest some biographies",
+      "do you have any romance books"
+    ]
+  },
+  {
+    "intent": "borrow_info",
+    "examples": [
+      "how many books can I borrow",
+      "borrowing limit",
+      "can I borrow more books",
+      "how long can I keep a book",
+      "due date for borrowed books"
+    ]
+  },
+  {
+   "intent": "borrow_status",
+  "examples": [
+    "Tell me about my borrow history",
+    "What books have I borrowed?",
+    "How many books have I taken?",
+    "My current borrow details",
+    "Which books are due?",
+    "Borrow summary",
+    "Show me what I borrowed",
+    "Tell me how many books I borrowed"
+  ]},
+  {
+    "intent": "return_info",
+    "examples": [
+      "how do I return a book",
+      "return process",
+      "can I return books tomorrow",
+      "where to return books",
+      "is late return allowed"
+    ]
+  }
+]
+
