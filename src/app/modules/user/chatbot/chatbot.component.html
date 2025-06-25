@@ -1,0 +1,29 @@
+<button class="chatbot-fab btn btn-primary rounded-circle shadow" (click)="openChat()">
+  💬
+</button>
+
+<!-- Chat Modal -->
+<div class="chat-modal" *ngIf="isOpen">
+  <div class="card chatbot-window shadow-lg">
+    <div class="card-header d-flex justify-content-between align-items-center bg-primary text-white">
+      <span>Chatbot Assistant</span>
+      <button type="button" class="btn-close btn-close-white" aria-label="Close" (click)="closeChat()"></button>
+    </div>
+
+    <div class="card-body chatbot-body">
+      <div *ngFor="let chat of chatHistory" [ngClass]="chat.sender === 'user' ? 'text-end' : 'text-start'">
+        <div class="p-2 my-1 rounded"
+             [class.bg-primary-subtle]="chat.sender === 'user'"
+             [class.bg-light]="chat.sender === 'bot'"
+             [class.text-dark]="chat.sender === 'user'">
+          {{ chat.message }}
+        </div>
+      </div>
+    </div>
+
+    <div class="card-footer d-flex">
+      <input [(ngModel)]="userMessage" class="form-control me-2" (keyup.enter)="sendMessage()" placeholder="Type your message...">
+      <button class="btn btn-success" (click)="sendMessage()">Send</button>
+    </div>
+  </div>
+</div>

@@ -1,0 +1,150 @@
+<div class="container-fluid">
+  <div class="row">
+    <div class="col-md-12">
+        <div class="mb-3 d-flex gap-2">
+          <button class="btn"
+                  [ngClass]="{
+                    'btn-outline-dark': selectedStatus !== 'All',
+                    'btn-dark': selectedStatus === 'All'
+                  }"
+                  (click)="filterBooksByStatus('All')">All</button>
+
+          <button class="btn"
+                  [ngClass]="{
+                    'btn-outline-success': selectedStatus !== 'Available',
+                    'btn-success': selectedStatus === 'Available'
+                  }"
+                  (click)="filterBooksByStatus('Available')">Available</button>
+
+          <button class="btn"
+                  [ngClass]="{
+                    'btn-outline-info': selectedStatus !== 'Borrowed',
+                    'btn-info': selectedStatus === 'Borrowed'
+                  }"
+                  (click)="filterBooksByStatus('Borrowed')">Borrowed</button>
+
+          <button class="btn"
+                  [ngClass]="{
+                    'btn-outline-danger': selectedStatus !== 'Damaged',
+                    'btn-danger': selectedStatus === 'Damaged'
+                  }"
+                  (click)="filterBooksByStatus('Damaged')">Damaged</button>
+        </div>
+
+        <div *ngIf="successMessage" class="alert alert-success alert-dismissible fade show" role="alert">
+                {{ successMessage }}
+                <button type="button" class="btn-close" (click)="successMessage = ''"></button>
+        </div>
+     
+        
+      <div class="d-flex justify-content-end gap-2 mb-3">
+        <input
+                type="text"
+                class="form-control w-25"
+                placeholder="Search books..."
+                [(ngModel)]="searchTerm"
+                (input)="searchBooks()" />
+            
+        <button class="btn btn-success fw-bold shadow" (click)="openAddBookCard()">+ ADD BOOK</button>
+        <button class="btn btn-secondary ms-2 fw-bold shadow me-2" (click)="exportToCSV()"> <span><i class="bi bi-download me-2"></i></span> Export </button>
+      </div>
+
+      
+      <div class="table-responsive shadow">
+        <table class="table table-bordered table-striped mt-3">
+           <thead class="table-primary">
+            <tr>
+              <th>ID</th>
+              <th>Title</th>
+              <th>Genre</th>
+              <th>Author</th>
+              <th>Year</th>
+              <th>Status</th>
+              <th>Copies</th>
+              <th>Action</th>
+            </tr>
+          </thead>
+  
+          <tbody>
+            <tr *ngFor="let book of filteredBooks" class="align-middle">
+              <td>{{ formatBookId(book.id) }}</td>
+              <td>{{ book.title }}</td>
+              <td>{{ book.genre }}</td>
+              <td>{{ book.author }}</td>
+              <td>{{ book.year }}</td>
+              <td>
+                <span 
+                  class="badge"
+                  [ngClass]="{
+                    'bg-success': book.status === 'Available',
+                    'bg-info': book.status === 'Borrowed',
+                    'bg-danger': book.status === 'Damaged'
+                  }"
+                >
+                  {{ book.status }}
+                </span>
+              </td>
+              <td>{{ book.copies }}</td>
+              <td>
+                <div class="d-flex gap-2">
+                  <button class="btn btn-sm btn-primary" (click)="editBook(book)">Edit</button>
+                  <button class="btn btn-sm btn-danger" (click)="deleteBook(book)">Delete</button>
+                </div>
+              </td>
+            </tr>
+          </tbody>
+        </table>
+      </div>
+    
+   
+    <div class="modal fade" [class.show]="isAddBookVisible" [style.display]="isAddBookVisible ? 'block' : 'none'">
+      <div class="modal-dialog">
+        <div class="modal-content">
+          <div class="modal-header bg-primary text-white">
+            <h5 class="modal-title">{{ isEditMode ? ' Edit Book' : '📘 Add Book' }}</h5>
+            <button type="button" class="btn-close btn-outline-danger" (click)="closeAddBookCard()"></button>
+          </div>
+          <div class="modal-body">
+            <form (ngSubmit)="submitBookForm()">
+              <div class="mb-3">
+                <label class="form-label fw-semibold">Title</label>
+                <input type="text" class="form-control" [(ngModel)]="book.title" name="title" placeholder="Enter book title" required />
+              </div>
+              <div class="mb-3">
+                <label class="form-label fw-semibold">Author</label>
+                <input type="text" class="form-control" [(ngModel)]="book.author" name="author" placeholder="Enter author" required />
+              </div>
+              <div class="mb-3">
+                <label class="form-label fw-semibold">Genre</label>
+                <select class="form-control" [(ngModel)]="book.genre" name="genre" required>
+                  <option *ngFor="let genre of genres" [value]="genre">{{ genre }}</option>
+                </select>
+              </div>
+              <div class="mb-3">
+                <label class="form-label fw-semibold">Year</label>
+                <input type="number" class="form-control" [(ngModel)]="book.year" name="year" required />
+              </div>
+              <div class="mb-3">
+                <label class="form-label fw-semibold">Status</label>
+                <select class="form-control" [(ngModel)]="book.status" name="status" [disabled]="isEditMode">
+                  <option value="Available">Available</option>
+                  <option value="Borrowed">Borrowed</option>
+                  <option value="Damaged">Damaged</option>
+                </select>
+              </div>
+              <div class="mb-3">
+                <label class="form-label fw-semibold">Copies</label>
+                <input type="number" class="form-control" [(ngModel)]="book.copies" name="copies"  />
+              </div>
+              <div class="d-flex justify-content-end gap-2 ">
+                <button type="submit" class="btn  btn-success"> Save</button>
+                <button type="button" class="btn btn-outline-danger" (click)="closeAddBookCard()">Cancel</button>
+              </div>
+            </form>
+          </div>
+        </div>
+      </div>
+    </div>
+    <div class="modal-backdrop fade" [class.show]="isAddBookVisible" [style.display]="isAddBookVisible ? 'block' : 'none'"></div>
+  </div>
+</div>

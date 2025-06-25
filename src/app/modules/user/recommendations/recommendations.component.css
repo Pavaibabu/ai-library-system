@@ -1,0 +1,23 @@
+.card-title {
+    font-size: 1.1rem;
+  }
+  
+  .card-text {
+    font-size: 0.95rem;
+    color: #555;
+  }
+  
+  button.btn {
+    width: 50%;
+  }
+  .card{
+    transition:transform 0.3s ease ,box-shadow 0.3s ease;
+    cursor: pointer;
+}
+.card:hover,
+.card:focus,
+.card:active{
+    transform: scale(1.05);
+    box-shadow: 0 4px 20px rgba(0,0,0,0.1);
+    border:2px solid #1e88e5;
+}

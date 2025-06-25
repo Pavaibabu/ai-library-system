@@ -1,0 +1,72 @@
+<app-navbar></app-navbar>
+<div class="container min-vh-100 d-flex justify-content-center align-items-center">
+  <div class="card shadow-lg w-100" style="max-width: 900px; border-radius: 1rem; overflow: hidden; background-color: rgba(255, 255, 255, 0.95);">
+    <div class="row g-0">
+
+  
+      <div class="col-md-5 bg-light d-flex flex-column justify-content-center align-items-center text-center p-4 border-end">
+        <img src="assets/images/lock.png" alt="Roles" class="img-fluid rounded-circle mx-auto d-block" 
+            width="200" height="200" />
+      </div>
+
+      <div class="col-md-7 p-5">
+        <h4 class="text-center mb-2 fw-bold text-primary">AI Library Login</h4>
+        <p class="text-center text-secondary fw-medium mb-4">Secure access for Admin & Users</p>
+
+        <div *ngIf="loginStatus" class="alert alert-dismissible fade show"
+             [ngClass]="{ 'alert-success': loginStatus === 'success', 'alert-danger': loginStatus === 'fail' }" role="alert">
+          {{ loginMessage }}
+          <button type="button" class="btn-close" (click)="loginStatus = null" aria-label="Close"></button>
+        </div>
+
+        <!-- Login Form -->
+        <form (ngSubmit)="login()" #loginForm="ngForm" novalidate>
+          <div class="mb-3">
+            <label for="username" class="form-label text-dark fw-medium">Username</label>
+            <div class="input-group">
+              <span class="input-group-text bg-primary text-white"><i class="bi bi-person-fill"></i></span>
+              <input 
+                type="text" 
+                id="username" 
+                name="username"
+                [(ngModel)]="username"
+                class="form-control" 
+                placeholder="Enter your username" 
+                required>
+            </div>
+          </div>
+
+          <div class="mb-4">
+            <label for="password" class="form-label text-dark fw-medium">Password</label>
+            <div class="input-group">
+              <span class="input-group-text bg-primary text-white"><i class="bi bi-lock-fill"></i></span>
+              <input 
+                type="password" 
+                id="password" 
+                name="password"
+                [(ngModel)]="password"
+                class="form-control" 
+                placeholder="Enter your password" 
+                required>
+            </div>
+          </div>
+
+          <div class="d-grid">
+            <button 
+              type="submit" 
+              class="btn btn-success btn-lg fw-semibold"
+              [disabled]="loginForm.invalid">
+              <i class="bi bi-box-arrow-in-right me-2"></i> Login
+            </button>
+          </div>
+        </form>
+
+        <div class="text-center mt-3">
+          <p class="text-dark">New here? 👉 <a routerLink="/register" class="text-primary fw-semibold">Register</a></p>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<app-footer></app-footer>
